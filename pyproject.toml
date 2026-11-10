@@ -1,0 +1,24 @@
+[project]
+name = "wled-dj"
+version = "2.0.0"
+description = "Music-reactive lighting for WLED, driven by whatever the Mac is playing"
+requires-python = ">=3.13,<3.14"
+dependencies = ["numpy", "scipy", "aiohttp", "zeroconf", "onnxruntime"]
+
+[dependency-groups]
+dev = ["pytest", "pytest-aiohttp"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["engine/wled_dj"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: needs real hardware or permissions", "models: needs the StemgenRT model files",
+           "corpus: needs bench/corpus and its cached stems"]
+addopts = "-m 'not live and not models and not corpus'"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

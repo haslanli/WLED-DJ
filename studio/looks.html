@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Looks · WLED DJ</title>
+<link rel="stylesheet" href="/static/studio.css">
+</head>
+<body>
+<header class="bar">
+  <div class="column bar-inner">
+    <span class="wordmark">WLED DJ</span>
+    <span class="bar-summary" id="counts">Loading…</span>
+    <a class="text-button" href="/">Back to the studio</a>
+  </div>
+</header>
+<main class="column">
+  <section class="title-row">
+    <div>
+      <h1>Looks</h1>
+      <p class="finding">The same clips of music under each look, rendered from the engine's own analysis. Every video shows
+        the strip three ways, left to right: from the front, from the side, and the light it throws on the room.</p>
+    </div>
+  </section>
+  <p class="notice" id="notice" role="alert" hidden></p>
+  <section class="card looks-pick">
+    <div>
+      <span class="label" id="look-label">Look</span>
+      <div class="segmented" id="look" role="radiogroup" aria-labelledby="look-label"></div>
+    </div>
+    <div>
+      <span class="label" id="beside-label">Beside it</span>
+      <div class="segmented" id="beside" role="radiogroup" aria-labelledby="beside-label"></div>
+    </div>
+  </section>
+  <div class="reviews" id="clips"></div>
+</main>
+<script>const TOKEN = "__TOKEN__";</script>
+<script src="/static/looks.js"></script>
+</body>
+</html>

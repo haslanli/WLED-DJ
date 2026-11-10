@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.app/
+app/.build/
+bench/corpus/
+bench/data/
+bench/out/
+.DS_Store

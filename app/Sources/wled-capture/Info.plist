@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>local.wled.dj.capture</string>
+	<key>CFBundleName</key>
+	<string>WLED DJ Capture</string>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>WLED DJ listens to the music your Mac plays to drive your lights. Audio stays on this Mac and is never recorded.</string>
+</dict>
+</plist>

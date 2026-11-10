@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>local.wled.dj</string>
+	<key>CFBundleName</key>
+	<string>WLED DJ</string>
+	<key>CFBundleDisplayName</key>
+	<string>WLED DJ</string>
+	<key>CFBundleExecutable</key>
+	<string>WLED DJ</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>2.0.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.2</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>WLED DJ finds your WLED lights on this network and streams the show to them.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_wled._tcp</string>
+	</array>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>WLED DJ listens to the music your Mac plays to drive your lights. Audio stays on this Mac and is never recorded.</string>
+</dict>
+</plist>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WLED DJ</title>
+<link rel="stylesheet" href="/static/studio.css">
+</head>
+<body>
+<header class="bar">
+  <div class="column bar-inner">
+    <span class="wordmark">WLED DJ</span>
+    <span class="bar-summary" id="summary">Connecting…</span>
+    <a class="text-button" id="looks-link" href="/looks" hidden>Compare the looks</a>
+    <button class="text-button" id="quit" type="button">Quit WLED DJ</button>
+  </div>
+</header>
+
+<main class="column">
+  <section class="title-row">
+    <div>
+      <h1 id="title">Your lights</h1>
+      <p class="finding" id="finding" role="status" aria-live="polite">Connecting to the engine…</p>
+    </div>
+    <button class="primary" id="blackout" type="button" aria-pressed="false">Blackout</button>
+  </section>
+
+  <p class="notice" id="notice" role="alert" hidden></p>
+
+  <section class="kpis" aria-label="Right now">
+    <div class="kpi"><span class="label">Tempo</span><span class="value num" id="k-tempo">–</span><span class="caption" id="k-tempo-c">no steady beat yet</span></div>
+    <div class="kpi"><span class="label">Heard after</span><span class="value num" id="k-out">–</span><span class="caption" id="k-out-c">waiting for the output device</span></div>
+    <div class="kpi"><span class="label">Lights wait</span><span class="value num" id="k-delay">–</span><span class="caption" id="k-delay-c">to land with the sound</span></div>
+    <div class="kpi"><span class="label">Frames to WLED</span><span class="value num" id="k-fps">–</span><span class="caption" id="k-fps-c">none sent yet</span></div>
+  </section>
+
+  <div class="grid">
+    <div class="main">
+      <section class="card live" aria-labelledby="live-h">
+        <div class="card-head">
+          <h2 id="live-h">Live</h2>
+          <span class="beat"><span class="beat-dot" id="beat-dot"></span><span id="beat-text">Beat</span></span>
+        </div>
+        <div class="strips" id="strips"></div>
+        <div class="meters-title label">Hits</div>
+        <div class="meters" id="meters" aria-label="Hits the analysis hears">
+          <div class="meter"><span>Kick</span><span class="track"><span class="fill" data-meter="kick"></span></span></div>
+          <div class="meter"><span>Snare</span><span class="track"><span class="fill" data-meter="snare"></span></span></div>
+          <div class="meter"><span>Hats</span><span class="track"><span class="fill" data-meter="hats"></span></span></div>
+          <div class="meter"><span>Bass</span><span class="track"><span class="fill" data-meter="bass"></span></span></div>
+          <div class="meter"><span>Vocal</span><span class="track"><span class="fill" data-meter="vocal"></span></span></div>
+        </div>
+        <div class="meters-title label">Layers</div>
+        <div class="meters layers" id="layers" aria-label="The music's layers">
+          <div class="meter"><span>Drums</span><span class="track"><span class="fill" data-layer="drums"></span></span></div>
+          <div class="meter"><span>Bass</span><span class="track"><span class="fill" data-layer="bass"></span></span></div>
+          <div class="meter"><span>Vocals</span><span class="track"><span class="fill" data-layer="vocals"></span></span></div>
+          <div class="meter"><span>Other</span><span class="track"><span class="fill" data-layer="other"></span></span></div>
+        </div>
+        <p class="help" id="layers-note">Layers are estimated from the mix.</p>
+        <p class="help" id="structure-note" hidden></p>
+      </section>
+
+      <section class="card show" aria-labelledby="show-h">
+        <h2 id="show-h">Show</h2>
+        <div class="show-grid">
+          <div>
+            <span class="label" id="looks-label">Look</span>
+            <div class="segmented" id="looks" role="radiogroup" aria-labelledby="looks-label"></div>
+          </div>
+          <div>
+            <label class="label" for="master">Brightness <span class="num" id="master-v">100%</span></label>
+            <input type="range" id="master" min="0" max="100" step="1" value="100">
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="rail">
+      <h2 class="rail-h">Sync</h2>
+      <section class="card">
+        <label class="label" for="trim">Fine trim <span class="num" id="trim-v">0 ms</span></label>
+        <input type="range" id="trim" min="-150" max="150" step="1" value="0">
+        <p class="help" id="trim-help">Pick Sync check, then slide until the flashes land on the kicks.</p>
+      </section>
+
+      <h2 class="rail-h">Analysis</h2>
+      <section class="card">
+        <span class="label" id="stems-label">Layer separation</span>
+        <div class="segmented" id="stems" role="radiogroup" aria-labelledby="stems-label">
+          <button type="button" role="radio" aria-checked="false" data-on="true">On</button>
+          <button type="button" role="radio" aria-checked="false" data-on="false">Off</button>
+        </div>
+        <p class="help">Hears drums, bass, vocals and the rest apart. Uses about one processor core.</p>
+      </section>
+
+      <h2 class="rail-h">Lights</h2>
+      <section class="card">
+        <div class="controller">
+          <div>
+            <div class="controller-name" id="c-name">Looking for WLED…</div>
+            <div class="meta num" id="c-meta">–</div>
+          </div>
+          <span class="pill" id="c-state">Searching</span>
+        </div>
+        <div class="candidates" id="candidates"></div>
+        <form class="add" id="add">
+          <label class="label" for="host">Connect by address</label>
+          <div class="add-row">
+            <input id="host" name="host" inputmode="url" autocomplete="off" placeholder="192.168.1.50">
+            <button class="outline" type="submit">Connect</button>
+          </div>
+        </form>
+      </section>
+
+      <div id="safety" hidden>
+      <h2 class="rail-h">Safety</h2>
+      <section class="card">
+        <span class="label" id="flash-limit-label">Flash limit</span>
+        <div class="segmented" id="flash-limit" role="radiogroup" aria-labelledby="flash-limit-label">
+          <button type="button" role="radio" aria-checked="false" data-value="1">1</button>
+          <button type="button" role="radio" aria-checked="false" data-value="2">2</button>
+          <button type="button" role="radio" aria-checked="false" data-value="3">3</button>
+          <button type="button" role="radio" aria-checked="false" data-value="0">Off</button>
+        </div>
+        <p class="help">At most this many full-strip flashes a second, whatever the look does. Off removes the limit:
+          fast full-strip flashing can trigger seizures in people with photosensitive epilepsy.</p>
+      </section>
+      </div>
+    </aside>
+  </div>
+</main>
+<script>const TOKEN = "__TOKEN__";</script>
+<script src="/static/studio.js"></script>
+</body>
+</html>

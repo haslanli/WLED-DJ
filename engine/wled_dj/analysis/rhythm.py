@@ -47,7 +47,10 @@ def _interp(signal: np.ndarray, index: float) -> float:
 
 
 class BeatTracker:
-    def __init__(self):
+    def __init__(self, detection_lag_s: float = 0.0):
+        """detection_lag_s: how long after a beat its onset reaches the envelope. The reported phase is moved on
+        by that much, so that phase 0 falls on the beat itself; the tracking inside is unchanged."""
+        self.lag = detection_lag_s
         self.envelope: deque[float] = deque(maxlen=WINDOW)
         self.steps = 0
         self.bpm = 0.0
@@ -74,8 +77,10 @@ class BeatTracker:
             self.kick_by_position *= .9
             self.kick_by_position[position] += kick.strength
         downbeat = int(np.argmax(self.kick_by_position)) if self.kick_by_position.any() else 0
-        bar_phase = (((self.beat_index - downbeat) % 4) + self.phase) / 4 if self.bpm > 0 else 0.0
-        return BeatState(self.bpm, self.phase, bar_phase % 1.0, self.confidence, t)
+        shifted = self.phase + (self.lag * self.bpm / 60 if self.bpm > 0 else 0.0)
+        phase, ahead = shifted % 1.0, math.floor(shifted)    # ahead: a beat the shift carries the phase over
+        bar_phase = (((self.beat_index + ahead - downbeat) % 4) + phase) / 4 if self.bpm > 0 else 0.0
+        return BeatState(self.bpm, phase, bar_phase % 1.0, self.confidence, t)
 
     def _estimate(self) -> None:
         env = np.convolve(np.asarray(self.envelope), SMOOTH, mode="same")

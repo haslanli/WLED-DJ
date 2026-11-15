@@ -42,6 +42,7 @@ BEAT_SOURCES = ("kick", "snare", "hats")
 WARM_HOPS = 100           # stem hops read before the stems are trusted (1 s)
 QUIET_HOPS = 100          # silent hops after which nothing is sent for separation (1 s)
 REFRACTORY_S = {spec.name: spec.refractory_s for spec in (*SPECS, *(spec for _, spec in STEM_SPECS))}
+BEAT_LAG_S = .009        # a beat's onset reaches the beat tracker this late: 7-11 ms on synthetic kicks
 SOURCE_SETTLE_S = 2.0     # after the source of the layers changed: no structure events, and the section holds
 AIR = band(*AIR_HZ)
 NO_EVENTS = dict(boundary=0.0, drop=False, vocal_entry=False, vocal_exit=False)
@@ -58,7 +59,7 @@ class Analyzer:
     def _reset(self) -> None:
         self.front = FrontEnd()
         self.detectors = {spec.name: OnsetDetector(spec) for spec in SPECS}
-        self.tracker = BeatTracker()
+        self.tracker = BeatTracker(detection_lag_s=BEAT_LAG_S)
         self.levels = Levels()
         self.band_layers = LayerTracker("bands")
         self.band_tone, self.band_lead, self.band_structure = ToneTracker(RATE), LeadTracker(RATE), StructureTracker()

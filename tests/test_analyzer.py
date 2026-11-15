@@ -373,3 +373,16 @@ def test_a_gap_starts_the_trackers_again():
     after = feed_all(analyzer, pattern[480 * 800:], t0=100.0 + 8.0 + .4)        # the host clock jumped 0.4 s
     assert after[5].structure.since_s < .2 and all(f.structure.since_s < 2.6 for f in after[:250])     # started again: a groove needs 2 s
     assert not any(f.structure.drop or f.structure.boundary for f in after[:400])
+
+
+def test_beat_phase_lands_on_the_kicks():
+    """Phase 0 falls on the kick itself, not on the moment its onset has worked its way through the analysis."""
+    bpm, start, t0 = 128.0, .5, 100.0
+    out = analyse(music_pattern(20.0, bpm=bpm, start=start), t0=t0)
+    kicks = t0 + np.arange(start, 20.0, 60 / bpm)
+    errors = []
+    for f in out:
+        if f.t > t0 + 12 and f.beat.bpm > 0:
+            beat = f.t - f.beat.phase * 60 / f.beat.bpm          # the last beat, as the phase places it
+            errors.append(beat - kicks[np.argmin(np.abs(kicks - beat))])
+    assert abs(np.median(errors)) < .003

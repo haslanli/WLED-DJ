@@ -165,3 +165,5 @@ swift test --package-path app     # app and capture-helper logic
 WLED DJ is released under the MIT licence (see `LICENSE`).
 
 Layer separation uses the [StemgenRT](https://github.com/sweetspotsoundsystem/stemgen-rt) model weights by Axel Delafosse, licensed CC BY-NC-SA 4.0 (non-commercial, share-alike), trained on MUSDB18-HQ and MoisesDB. WLED DJ downloads them unchanged at first start and does not redistribute them; their licence, not MIT, governs their use.
+
+The analysis builds on published methods: harmonic/percussive separation by median filtering (D. FitzGerald, DAFx 2010), onset detection by spectral flux with adaptive median thresholds (J. P. Bello et al., IEEE Transactions on Speech and Audio Processing, 2005), tempo by autocorrelation with a log-Gaussian prior around 120 BPM (D. P. W. Ellis, Journal of New Music Research, 2007), and the harmony's place on the circle of fifths, one part of the tonal centroid (C. Harte, M. Sandler and M. Gasser, AMCMM 2006). Colour works in Björn Ottosson's OKLab.

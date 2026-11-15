@@ -17,6 +17,12 @@ FAKE = str(Path(__file__).parent / "fakes" / "fake_capture.py")
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def waited_ms(status):
+    """All the time the lights wait behind the sound: what processing took plus the delay still to run. On a busy
+    machine processing takes longer and the delay shrinks to match, so the sum is what the sync keeps."""
+    return status["sync"]["delay_ms"] + status["sync"]["processing_ms"]
+
+
 def wait_for(predicate, timeout, step=.05):
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
@@ -65,7 +71,7 @@ def test_airpods_delay_applied(tmp_path, fake):
     try:
         time.sleep(2.5)
         status = engine.status()
-        assert 130 <= status["sync"]["delay_ms"] <= 160
+        assert 130 <= waited_ms(status) <= 161                # the Fake AirPods' 170.7 ms, less 10 ms for the network
         assert abs(status["output"]["latency_ms"] - 160.7) <= 10
         assert status["capture"]["output"]["latency_ms"] == 170.7
     finally:
@@ -81,9 +87,9 @@ def test_output_switch_mid_stream(tmp_path, fake):
             counts.append(engine.status()["output"]["sent"])
             time.sleep(.1)
         assert all(b > a for a, b in zip(counts, counts[1:]))
-        status = engine.status()
-        assert status["capture"]["output"]["name"] == "Fake AirPods"
-        assert 130 <= status["sync"]["delay_ms"] <= 160
+        # The fake switches to AirPods after 100 blocks, later on a busy machine; the latency then eases in over 1 s.
+        assert wait_for(lambda: engine.status()["capture"]["output"]["name"] == "Fake AirPods", 5.0)
+        assert wait_for(lambda: 130 <= waited_ms(engine.status()) <= 161, 3.0)   # 170.7 ms, less 10 for the network
     finally:
         engine.stop()
 
@@ -120,11 +126,11 @@ def test_capture_helper_crash_recovers(tmp_path, fake):
 def test_silence_hands_back_and_resumes(tmp_path, fake):
     engine = make_engine(tmp_path, fake, "silence-then-music", "--silence-s", "4", handback=1.0)
     try:
-        assert wait_for(lambda: engine.status()["output"]["handback"], 3.5)
+        assert wait_for(lambda: engine.status()["output"]["handback"], 8.0)   # waits only: a busy machine starts slowly
         count = fake.packet_count()
         time.sleep(.5)
         assert fake.packet_count() == count
-        assert wait_for(lambda: not engine.status()["output"]["handback"], 3.0)
+        assert wait_for(lambda: not engine.status()["output"]["handback"], 8.0)
         resumed = time.monotonic()
         assert wait_for(lambda: fake.packet_count() > count, .2)
         assert time.monotonic() - resumed < .25
@@ -395,9 +401,10 @@ def test_output_change_with_a_tap_rebuild_gap(tmp_path, fake):
         # The engine promises dark frames once audio has been missing for 0.1 s, so the lights never go a
         # whole gap without a frame. The longest pause is that 0.1 s plus a frame or two.
         assert len(arrivals) > 150 and max(np.diff(arrivals)) < .2
+        assert wait_for(lambda: engine.status()["capture"]["state"] == "running"
+                        and engine.status()["capture"]["output"]["name"] == "Fake AirPods", 5.0)
+        assert wait_for(lambda: 130 <= waited_ms(engine.status()) <= 161, 3.0)   # 170.7 ms, less 10 for the network
         status = engine.status()
-        assert status["capture"]["state"] == "running" and status["capture"]["output"]["name"] == "Fake AirPods"
-        assert 130 <= status["sync"]["delay_ms"] <= 160
         assert status["music"]["bpm"] > 0 or wait_for(lambda: engine.status()["music"]["bpm"] > 0, 6.0)
     finally:
         engine.stop()

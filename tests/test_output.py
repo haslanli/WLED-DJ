@@ -63,12 +63,12 @@ def test_probe_reads_gamma_settings(fake):
 
 
 def test_prepare_saves_and_restore_restores(fake):
-    fake.state.update(on=False, bri=80)
+    fake.state.update(on=False, bri=80, lor=2)       # the user had WLED ignore live data until reboot
     w = Wled(fake.host, http_port=fake.http_port)
     w.prepare()
     assert fake.state_posts()[-1] == {"on": True, "bri": 255, "lor": 0}
     w.restore()
-    assert fake.state_posts()[-1] == {"on": False, "bri": 80, "live": False}
+    assert fake.state_posts()[-1] == {"on": False, "bri": 80, "lor": 2, "live": False}
 
 
 def test_restore_ends_realtime_at_once(fake):
@@ -78,7 +78,7 @@ def test_restore_ends_realtime_at_once(fake):
     start = time.monotonic()
     w.restore()
     assert time.monotonic() - start < .5         # no waiting out WLED's realtime timeout at full brightness
-    assert fake.state_posts()[-1] == {"on": True, "bri": 128, "live": False}
+    assert fake.state_posts()[-1] == {"on": True, "bri": 128, "lor": 0, "live": False}
 
 
 def test_prepare_enables_realtime_receive(fake):

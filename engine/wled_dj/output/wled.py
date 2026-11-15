@@ -81,14 +81,15 @@ class Wled:
             raise ControllerBusy(f"{self.host} is already showing another realtime stream")
         if self.previous is None:
             state = self._request("state")
-            self.previous = {"on": bool(state.get("on", True)), "bri": int(state.get("bri", 128))}
+            self.previous = {"on": bool(state.get("on", True)), "bri": int(state.get("bri", 128)),
+                             "lor": int(state.get("lor", 0))}
         if not self._request("cfg").get("if", {}).get("live", {}).get("en", True):
             self._request("cfg", {"if": {"live": {"en": True}}})
         self._request("state", {"on": True, "bri": 255, "lor": 0})
 
     def release(self) -> None:
-        """Give the user's on/off and brightness back, and end realtime mode in the same request so WLED
-        never shows its own effect at full brightness in between. The state stays remembered."""
+        """Give the user's on/off, brightness and live override back, and end realtime mode in the same
+        request so WLED never shows its own effect at full brightness in between. The state stays remembered."""
         if self.previous is None:
             return
         self._request("state", {**self.previous, "live": False})

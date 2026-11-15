@@ -137,7 +137,7 @@ def test_quit_restores_controller(tmp_path, fake):
     assert wait_for(lambda: engine.status()["controller"]["state"] == "online", 3.0)
     engine.stop()
     engine.stop()
-    assert fake.state_posts()[-1] == {"on": True, "bri": 128, "live": False}
+    assert fake.state_posts()[-1] == {"on": True, "bri": 128, "lor": 0, "live": False}
 
 
 def test_set_look(tmp_path, fake):
@@ -282,7 +282,7 @@ def test_probe_failure_mid_show_keeps_original_state(tmp_path):
     finally:
         engine.stop()
         fake.stop()
-    assert fake.state_posts()[-1] == {"on": True, "bri": 90, "live": False}
+    assert fake.state_posts()[-1] == {"on": True, "bri": 90, "lor": 0, "live": False}
 
 
 def test_handback_restores_and_takeback_prepares_again(tmp_path):
@@ -291,12 +291,12 @@ def test_handback_restores_and_takeback_prepares_again(tmp_path):
     fake.start()
     engine = make_engine(tmp_path, fake, "silence-then-music", "--silence-s", "4", handback=1.0)
     try:
-        assert wait_for(lambda: {"on": False, "bri": 60, "live": False} in fake.state_posts(), 5.0)
+        assert wait_for(lambda: {"on": False, "bri": 60, "lor": 0, "live": False} in fake.state_posts(), 5.0)
         assert wait_for(lambda: fake.state_posts()[-1] == {"on": True, "bri": 255, "lor": 0}, 6.0)
     finally:
         engine.stop()
         fake.stop()
-    assert fake.state_posts()[-1] == {"on": False, "bri": 60, "live": False}
+    assert fake.state_posts()[-1] == {"on": False, "bri": 60, "lor": 0, "live": False}
 
 
 def test_controller_address_is_resolved_again_on_reprobe(tmp_path, fake, monkeypatch):
@@ -373,7 +373,7 @@ def test_a_rebooted_controller_is_prepared_again(tmp_path, fake):
         assert wait_for(lambda: engine.status()["controller"]["buses"] == [{"start": 0, "length": 78, "reversed": True}], 3.0)
     finally:
         engine.stop()
-    assert fake.state_posts()[-1] == {"on": True, "bri": 128, "live": False}   # still the state from launch
+    assert fake.state_posts()[-1] == {"on": True, "bri": 128, "lor": 0, "live": False}   # still the state from launch
 
 
 def test_capture_drops_reach_the_status(tmp_path, fake):

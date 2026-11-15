@@ -120,7 +120,7 @@ When the music stops for 8 seconds the lights fade and WLED returns to its own e
 
 ## How the sync works
 
-Sound takes time to reach you: about 20 ms from the MacBook's speakers, about 170 ms through AirPods, around 2 seconds over AirPlay. WLED DJ reads that latency from macOS and delays the lights by it. On wired outputs, where the lights cannot be earlier than the music they react to, processing is kept to a few milliseconds and `lead` tells a look how late it runs, so beat-locked elements can fire early.
+Sound takes time to reach you: about 20 ms from the MacBook's speakers, about 170 ms through AirPods, a second or more over AirPlay. WLED DJ reads that latency from macOS and delays the lights by it. On wired outputs, where the lights cannot be earlier than the music they react to, processing is kept to a few milliseconds and `lead` tells a look how late it runs, so beat-locked elements can fire early.
 
 ## If something is wrong
 

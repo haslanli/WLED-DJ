@@ -17,7 +17,7 @@ It never touches your audio: no virtual audio device, no change of output, no ad
 - **A studio page** in the browser: live preview, look picker, brightness, blackout, sync trim, flash limit.
 - **Tools for look authors:** perceptual colour (OKLab) and a canvas to paint on, offline renders of a look on your own music as video, and numbers read from those renders.
 
-Requires macOS 14.2 or later (for the system-audio tap), Python 3.13 through [uv](https://docs.astral.sh/uv/), Xcode command-line tools to build the app, and `ffmpeg` for the render tools.
+Requires an Apple Silicon Mac (onnxruntime, which runs the separation model, has no Intel macOS builds) with macOS 14.2 or later (for the system-audio tap), Python 3.13 through [uv](https://docs.astral.sh/uv/), Xcode command-line tools to build the app, and `ffmpeg` for the render tools.
 
 ## Start
 

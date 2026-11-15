@@ -108,7 +108,10 @@ class BeatTracker:
             self.phase = measured
         else:
             error = (measured - self.phase + .5) % 1 - .5
-            self.phase = (self.phase + PHASE_PULL * error) % 1.0
+            pulled = self.phase + PHASE_PULL * error
+            wraps = math.floor(pulled)                      # a pull over a beat counts it, as step does
+            self.beat_index += wraps
+            self.phase = pulled - wraps
 
     @staticmethod
     def _comb_phase(env: np.ndarray, period: float) -> float:

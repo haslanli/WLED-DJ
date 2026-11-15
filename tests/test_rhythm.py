@@ -72,3 +72,17 @@ def test_unknown_tempo_before_enough_history():
     _, states = feed(clicks(128, .3, 1.5), 1.5)
     assert states[-1].bpm == 0 and states[-1].confidence == 0
     assert 0 <= states[-1].bar_phase < 1
+
+
+def test_a_phase_pull_across_a_beat_keeps_the_beat_count():
+    """The pull toward a new estimate can carry the phase over a beat, either way; that beat is counted
+    (or taken back), so the beat position never jumps by a whole beat and the bar keeps its place."""
+    tracker = BeatTracker()
+    for i in range(400):                                     # 4 s of clicks at 120 BPM: several estimates
+        tracker.step(i * STEP, 1.0 if i % 50 == 0 else 0.0)
+    for phase, measured in ((.98, .08), (.01, .91)):         # pulled forward over a beat, then back over one
+        tracker.phase = phase
+        tracker._comb_phase = lambda env, period, measured=measured: measured
+        before = tracker.beat_index + tracker.phase
+        tracker._estimate()
+        assert abs(tracker.beat_index + tracker.phase - before) < .05

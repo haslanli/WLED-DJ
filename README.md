@@ -12,7 +12,7 @@ It never touches your audio: no virtual audio device, no change of output, no ad
 - **Analysis every 10 ms:** kicks, snares, hats, bass notes, vocal onsets, tempo and beat; four layers (drums, bass, vocals, other) with level and presence; the song's energy, tension and section (quiet, groove, breakdown, build, drop), boundaries and drops; the harmony's colour; the lead's pitch position.
 - **Layer separation** with the [StemgenRT](https://github.com/sweetspotsoundsystem/stemgen-rt) model in a helper process, with a fallback to estimates from the mix when the Mac is too busy.
 - **Sync:** the lights are delayed by the latency macOS reports for the current output, with a fine trim per device.
-- **Output:** DDP to WLED, found by mDNS; WLED's own state is restored on quit.
+- **Output:** DDP to WLED, found by mDNS, at 60 frames a second (77 to a WLED build that reports `ddp_fast_refresh`); WLED's own state is restored on quit.
 - **A flash limit** for every look: at most three large flashes a second by default (a quarter of the strip or more lighting up at once), following WCAG 2.3.1.
 - **A studio page** in the browser: live preview, look picker, brightness, blackout, sync trim, flash limit.
 - **Tools for look authors:** perceptual colour (OKLab) and a canvas to paint on, offline renders of a look on your own music as video, and numbers read from those renders.

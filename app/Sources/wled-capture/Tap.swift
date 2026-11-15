@@ -79,7 +79,8 @@ final class Capture {
     private var io: AudioDeviceIOProcID?
     private var converter: AVAudioConverter?
     private var dropped: UInt32 = 0
-    /// Buffers for the real-time callback, made before audio starts: the callback must not allocate.
+    /// Audio buffers for the real-time callback, made before audio starts so it never allocates one.
+    /// (Handing a buffer to the converter queue still allocates a small closure.)
     /// As many as there are slots, reused in order (the converter queue releases them in the same order).
     private static let slotCount = 4
     private static let maxFrames: AVAudioFrameCount = 8192

@@ -16,8 +16,8 @@ private func address(_ selector: AudioObjectPropertySelector,
     AudioObjectPropertyAddress(mSelector: selector, mScope: scope, mElement: kAudioObjectPropertyElementMain)
 }
 
-private func read<T>(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector,
-                     _ scope: AudioObjectPropertyScope = kAudioObjectPropertyScopeGlobal, _ value: inout T) -> Bool {
+private func read<T: BitwiseCopyable>(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector,
+                                      _ scope: AudioObjectPropertyScope = kAudioObjectPropertyScopeGlobal, _ value: inout T) -> Bool {
     var where_ = address(selector, scope)
     var size = UInt32(MemoryLayout<T>.size)
     return AudioObjectGetPropertyData(object, &where_, 0, nil, &size, &value) == noErr
@@ -36,7 +36,7 @@ struct OutputDevice: Equatable {
         guard read(AudioObjectID(kAudioObjectSystemObject), kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, &id), id != 0 else {
             return nil
         }
-        var name = "" as CFString, uid = "" as CFString
+        var name: Unmanaged<CFString>?, uid: Unmanaged<CFString>?      // Core Audio hands over +1 references
         _ = read(id, kAudioObjectPropertyName, kAudioObjectPropertyScopeGlobal, &name)
         _ = read(id, kAudioDevicePropertyDeviceUID, kAudioObjectPropertyScopeGlobal, &uid)
         var transport: UInt32 = 0, latency: UInt32 = 0, safety: UInt32 = 0, buffer: UInt32 = 0, rate: Float64 = 0
@@ -55,7 +55,8 @@ struct OutputDevice: Equatable {
             }
         }
         let code = String(bytes: [24, 16, 8, 0].map { UInt8((transport >> $0) & 0xff) }, encoding: .ascii) ?? "?"
-        return OutputDevice(id: id, name: name as String, uid: uid as String, transport: code,
+        return OutputDevice(id: id, name: name.map { $0.takeRetainedValue() as String } ?? "",
+                            uid: uid.map { $0.takeRetainedValue() as String } ?? "", transport: code,
                             latencyMs: totalOutputLatencyMs(device: latency, safety: safety, buffer: buffer,
                                                             stream: streamLatency, rate: rate))
     }

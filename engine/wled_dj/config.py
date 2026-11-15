@@ -45,7 +45,7 @@ class Settings:
     port: int = 8770
     handback_after_s: float = 8.0
     stems: bool = True          # read the music's layers with the separation model when it keeps up
-    flash_limit: int = 3        # full-strip flashes allowed in any one second, whatever the look does; 0 = no limit
+    flash_limit: int = 3        # large flashes (a quarter of the strip or more) allowed in any one second; 0 = no limit
 
 
 def app_support_dir() -> Path:

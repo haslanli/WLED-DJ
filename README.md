@@ -13,7 +13,7 @@ It never touches your audio: no virtual audio device, no change of output, no ad
 - **Layer separation** with the [StemgenRT](https://github.com/sweetspotsoundsystem/stemgen-rt) model in a helper process, with a fallback to estimates from the mix when the Mac is too busy.
 - **Sync:** the lights are delayed by the latency macOS reports for the current output, with a fine trim per device.
 - **Output:** DDP to WLED, found by mDNS; WLED's own state is restored on quit.
-- **A flash limit** for every look: at most three full-strip flashes a second by default, following WCAG 2.3.1.
+- **A flash limit** for every look: at most three large flashes a second by default (a quarter of the strip or more lighting up at once), following WCAG 2.3.1.
 - **A studio page** in the browser: live preview, look picker, brightness, blackout, sync trim, flash limit.
 - **Tools for look authors:** perceptual colour (OKLab) and a canvas to paint on, offline renders of a look on your own music as video, and numbers read from those renders.
 
@@ -105,7 +105,7 @@ uv run python bench/structure_view.py song.wav                # a page showing w
 uv run python bench/measure_engine.py --look sync-check       # timing of the real engine on fakes
 ```
 
-`render_look.py` writes to `bench/out/looks/`; the studio's **Compare the looks** page (`/looks`) plays the renders side by side with their numbers: full-strip flashes in the busiest second, the fastest blinking of any one spot, average lightness, how much of the strip is lit. `wled_dj.looks.colour` and `wled_dj.looks.canvas` let a look work in lightness, chroma and hue as the eye sees them and convert once.
+`render_look.py` writes to `bench/out/looks/`; the studio's **Compare the looks** page (`/looks`) plays the renders side by side with their numbers: large flashes in the busiest second, the fastest blinking of any one spot, average lightness, how much of the strip is lit. `wled_dj.looks.colour` and `wled_dj.looks.canvas` let a look work in lightness, chroma and hue as the eye sees them and convert once.
 
 ## The studio
 
@@ -114,7 +114,7 @@ uv run python bench/measure_engine.py --look sync-check       # timing of the re
 - **Look** picks the look. **Brightness** is the master level.
 - **Sync → Fine trim** nudges the lights by up to 150 ms, remembered per output device.
 - **Analysis → Layer separation** turns the separation model on or off (about one processor core).
-- **Safety → Flash limit** is the most full-strip flashes a second the lights may make, whatever the look does. Off removes the limit; fast full-strip flashing can trigger seizures in people with photosensitive epilepsy.
+- **Safety → Flash limit** is the most large flashes a second (a quarter of the strip or more lighting up at once) the lights may make, whatever the look does. Off removes the limit; fast flashing can trigger seizures in people with photosensitive epilepsy.
 
 When the music stops for 8 seconds the lights fade and WLED returns to its own effect.
 

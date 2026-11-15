@@ -11,7 +11,7 @@ const percent = (value) => `${Math.round(value * 100)}%`;
 
 function numbers(n, kind) {
   if (!n) return [];
-  const rows = [["Full-strip flashes in the busiest second", String(n.large_flashes)]];
+  const rows = [["Large flashes in the busiest second", String(n.large_flashes)]];
   if (kind === "new" && n.unlimited_flashes !== undefined) {
     rows.push(["Before the flash limit", String(n.unlimited_flashes)]);
     rows.push(["Frames the flash limit dimmed", String(n.held)]);
